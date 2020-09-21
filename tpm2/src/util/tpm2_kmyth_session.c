@@ -205,9 +205,9 @@ void tpm2_kmyth_create_authVal(char *authStringIn, TPM2B_AUTH * authValOut)
   // Set authVal size to digest size produced by Kmyth hash algorithm
   authValOut->size = KMYTH_DIGEST_SIZE;
 
-  // If no authorization string was specified by the user (NULL string passed
+  // If no authorization string was specified by the user (NULL string or empty string passed
   // in), initialize authorization value to the default (all-zero digest)
-  if (authStringIn == NULL)
+  if (authStringIn == NULL || authStringIn == "")
   {
     kmyth_log(LOG_DEBUG, "NULL authorization string");
     memset(authValOut->buffer, 0, authValOut->size);
