@@ -180,7 +180,7 @@ int main(int argc, char **argv)
     char *temp_str = malloc((strlen(original_fn) + 5) * sizeof(char));
 
     strncpy(temp_str, original_fn, strlen(original_fn));
-    free(original_fn);
+    
     // Remove any leading '.'s
     while (*temp_str == '.')
     {
@@ -191,7 +191,7 @@ int main(int argc, char **argv)
     // Everything beyond first '.' in original filename, with any leading
     // '.'(s) removed, is treated as extension
     temp_str = strtok_r(temp_str, ".", &scratch);
-    free(scratch);
+    
     // Append .ski file extension
     strncat(temp_str, ".ski", 5);
 
@@ -200,8 +200,7 @@ int main(int argc, char **argv)
     if (outPath_size < 6)
     {
       kmyth_log(LOG_ERR, "invalid default filename derived ... exiting");
-      free(temp_str);
-      kmyth_clean(6, 2, authString, ownerAuthPasswd, inPath, outPath, pcrsString, cipherString);
+      kmyth_clean(9, 2, authString, ownerAuthPasswd, inPath, outPath, pcrsString, cipherString, original_fn, temp_str, scratch);
       return 1;
     }
     // Make sure default filename we constructed doesn't already exist
@@ -211,8 +210,7 @@ int main(int argc, char **argv)
       kmyth_log(LOG_ERR,
                 "default output filename (%s) already exists ... exiting",
                 temp_str);
-      free(temp_str);
-      kmyth_clean(6, 2, authString, ownerAuthPasswd, inPath, outPath, pcrsString, cipherString);
+      kmyth_clean(9, 2, authString, ownerAuthPasswd, inPath, outPath, pcrsString, cipherString, original_fn, temp_str, scratch);
       return 1;
     }
     // Go ahead and make the default value the output path
@@ -243,7 +241,7 @@ int main(int argc, char **argv)
   // Clean-up any remaining resources
   //   Note: authString and ownerAuthPasswd cleared after use in
   //         tpm2_kmyth_seal(), which completed successfully at this point
-  kmyth_clean(6, 2, authString, ownerAuthPasswd, inPath, outPath, pcrsString, cipherString);
+  kmyth_clean(4, 0, inPath, outPath, pcrsString, cipherString);
   
 
   return 0;
