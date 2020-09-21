@@ -94,7 +94,7 @@ int main(int argc, char **argv)
   char *inPath = NULL;
   char *outPath = NULL;
   size_t outPath_size = 0;
-  char *authString = NULL;
+  char *authString = "";
   char *ownerAuthPasswd = "";
   char *pcrsString = NULL;
   char *cipherString = NULL;
@@ -160,15 +160,7 @@ int main(int argc, char **argv)
   if (inPath == NULL)
   {
     kmyth_log(LOG_ERR, "no input (file to be sealed) specified ... exiting");
-    if (authString != NULL)
-    {
-      kmyth_clear_and_free(authString, strlen(authString));
-    }
-    kmyth_clear_and_free(ownerAuthPasswd, strlen(ownerAuthPasswd));
-    free(inPath);
-    free(outPath);
-    free(pcrsString);
-    free(cipherString);
+    kmyth_clean(6, 2, authString, ownerAuthPasswd, inPath, outPath, pcrsString, cipherString);
     return 1;
   }
 
@@ -176,15 +168,7 @@ int main(int argc, char **argv)
   if (verifyInputFilePath(inPath))
   {
     kmyth_log(LOG_ERR, "input path (%s) is not valid ... exiting", inPath);
-    if (authString != NULL)
-    {
-      kmyth_clear_and_free(authString, strlen(authString));
-    }
-    kmyth_clear_and_free(ownerAuthPasswd, strlen(ownerAuthPasswd));
-    free(inPath);
-    free(outPath);
-    free(pcrsString);
-    free(cipherString);
+    kmyth_clean(6, 2, authString, ownerAuthPasswd, inPath, outPath, pcrsString, cipherString);
     return 1;
   }
 
@@ -217,15 +201,7 @@ int main(int argc, char **argv)
     {
       kmyth_log(LOG_ERR, "invalid default filename derived ... exiting");
       free(temp_str);
-      if (authString != NULL)
-      {
-        kmyth_clear_and_free(authString, strlen(authString));
-      }
-      kmyth_clear_and_free(ownerAuthPasswd, strlen(ownerAuthPasswd));
-      free(inPath);
-      free(outPath);
-      free(pcrsString);
-      free(cipherString);
+      kmyth_clean(6, 2, authString, ownerAuthPasswd, inPath, outPath, pcrsString, cipherString);
       return 1;
     }
     // Make sure default filename we constructed doesn't already exist
@@ -236,15 +212,7 @@ int main(int argc, char **argv)
                 "default output filename (%s) already exists ... exiting",
                 temp_str);
       free(temp_str);
-      if (authString != NULL)
-      {
-         kmyth_clear_and_free(authString, strlen(authString)); 
-      }
-      kmyth_clear_and_free(ownerAuthPasswd, strlen(ownerAuthPasswd));
-      free(inPath);
-      free(outPath);
-      free(pcrsString);
-      free(cipherString);
+      kmyth_clean(6, 2, authString, ownerAuthPasswd, inPath, outPath, pcrsString, cipherString);
       return 1;
     }
     // Go ahead and make the default value the output path
@@ -258,16 +226,7 @@ int main(int argc, char **argv)
   if (verifyOutputFilePath(outPath))
   {
     kmyth_log(LOG_ERR, "output path (%s) is not valid ... exiting", outPath);
-    
-    if (authString != NULL)
-    {
-      kmyth_clear_and_free(authString, strlen(authString));
-    }
-    kmyth_clear_and_free(ownerAuthPasswd, strlen(ownerAuthPasswd));
-    free(inPath);
-    free(outPath);
-    free(pcrsString);
-    free(cipherString);
+    kmyth_clean(6, 2, authString, ownerAuthPasswd, inPath, outPath, pcrsString, cipherString);
     return 1;
   }
 
@@ -277,25 +236,14 @@ int main(int argc, char **argv)
                       authString, pcrsString, ownerAuthPasswd, cipherString))
   {
     kmyth_log(LOG_ERR, "kmyth-seal error ... exiting");
-    if (authString != NULL)
-    {
-      kmyth_clear_and_free(authString, strlen(authString));
-    }
-    kmyth_clear_and_free(ownerAuthPasswd, strlen(ownerAuthPasswd));
-    free(inPath);
-    free(outPath);
-    free(pcrsString);
-    free(cipherString);
+    kmyth_clean(6, 2, authString, ownerAuthPasswd, inPath, outPath, pcrsString, cipherString);
     return 1;
   }
 
   // Clean-up any remaining resources
   //   Note: authString and ownerAuthPasswd cleared after use in
   //         tpm2_kmyth_seal(), which completed successfully at this point
-  free(inPath);
-  free(outPath);
-  free(pcrsString);
-  free(cipherString);
+  kmyth_clean(6, 2, authString, ownerAuthPasswd, inPath, outPath, pcrsString, cipherString);
   
 
   return 0;
